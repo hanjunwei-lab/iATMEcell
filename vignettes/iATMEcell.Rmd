@@ -12,7 +12,7 @@ output:
     highlight: github
     theme: cayman
 vignette: >
-  %\VignetteIndexEntry{CNA2Subpathway User Guide} 
+  %\VignetteIndexEntry{iATMEcell User Guide} 
   %\usepackage[utf8]{inputenc} 
   %\VignetteEncoding{UTF-8} 
   %\VignetteEngine{knitr::rmarkdown}
