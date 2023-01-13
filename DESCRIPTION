@@ -1,0 +1,30 @@
+Package: iATMEcell
+Type: Package
+Title: Identification of Abnormal Tumor Microenvironment Cells
+Version: 0.1.0
+Maintainer: Junwei Han <hanjunwei1981@163.com>
+Authors@R: c(person(given = "Junwei", family = "Han", email = "hanjunwei1981@163.com", role  = c("aut", "cre", "cph")),
+             person(given = "Jiashuo", family = "Wu", role  = "aut"),
+             person(given = "Yuqi", family = "Sheng", role  = "aut"))
+Description: A systematic biology tool was developed to identification of abnormal tumor microenvironment cells. iATMEcell first construct a cell-cell crosstalk network based on cell functions, and then it used a network propagation algorithm to identify significantly abnormal cells and verify their prognostic efficacy.
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+Depends: 
+    R (>= 3.6)
+RoxygenNote: 7.1.1
+Imports: forestplot,
+         ggplot2,
+         ggpubr,
+         igraph,
+         pheatmap,
+         plyr,
+         reshape2,
+         stats,
+         survival,
+         survminer,
+         glmnet
+Suggests: 
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr

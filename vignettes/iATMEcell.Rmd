@@ -1,0 +1,160 @@
+---
+title: "iATMEcell User Guide"
+author: "Junwei Han"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+  pdf_document:
+    toc: yes
+  prettydoc::html_pretty:
+    highlight: github
+    theme: cayman
+vignette: >
+  %\VignetteIndexEntry{iATMEcell User Guide} 
+  %\usepackage[utf8]{inputenc} 
+  %\VignetteEncoding{UTF-8} 
+  %\VignetteEngine{knitr::rmarkdown}
+
+---
+```{r style, echo=FALSE, results="asis", message=FALSE}
+knitr::opts_chunk$set(tidy = FALSE,
+                      warning = FALSE,
+                      message = FALSE)
+```
+
+```{r , include = FALSE}
+library(iATMEcell)
+```
+
+## <font face="微软雅黑"> Introduce </font>
+
+<font face="微软雅黑"> This vignette illustrates how to easily use the **iATMEcell package**. Here, we propose a network-based calculated method, iATMEcell, to identify abnormal tumor microenvironment cells with gene expression data, and a cell crosstalk network. Furthermore, the package can perform regression analysis to verify cell's prognostic efficacy. There are also some functions used to visualize the results of survival analysis.
+
+This network-based method consists of two major parts:
+
+  - 1.Calculate the DEscore. We conducted a statistical comparison of gene expression values between case and control groups (e.g. disease and normal, dead and alive). In this case, we use Student’s t-test method to compute the gene differentially expressed level for each gene between dead and alive samples, and convert the t-test p-value of each gene to z-score. The z-score is defined as DEscore, and a larger DEscore indicates the gene regulated by survival status to a greater extent.
+
+  - 2.Constructing network and randomization. In our method, we fist constructed a cell-GO bipartite network. The biological function data was derived from GO biological processes, In the “gene ontology” term, a biological process represents a specific objective that the organism is genetically programmed to achieve. The biological process gene sets were downloaded from C5 GO gene sets in the Molecular Signatures Database (MSigDB) database (version 7.0). We then manually curated the GO gene sets associated with human immune function, and obtained 139 GO terms, which were deposited in our “iATMEcell” package. We then define an edge between a cell and a Go term, if they have a common gene, and give the weight of this edge that calculate by the Jaccard index and DEscore. Next, we made the cell-GO network convert to cell-cell network, similarly, we define an edge between two cells, if they have common biology function, and the edge weights will be larger for pairs of cells that relate more to GO and survival. Then, we use eigenvector centrality measure to calculate how central each cell is in this network. Finally, the significance of these centrality scores is assessed using a bootstrap-based randomization method.
+
+   This package provides the **GetExampleSet** function to return example data set and environment variables, such as the gene expression profile and so on.</font>
+
+*****
+## <font face="微软雅黑">  Example 1 : Run the iTMEcell function to identify abnormal TME cells. </font>
+
+<font face="微软雅黑">  The function **iTMEcell** including the two major parts of this network-based method used to find significant abnormal cells. Users need to input a gene expression profile of specific disease and corresponding samples label of Condition. And the last variable is nperm, that representative number of disturbances, usually nperm = 1000 or bigger.
+  
+  The commands are as follows: </font>
+
+```{r,message=FALSE}
+# load depend package
+library(igraph)
+#Obtain input data
+GEP<-GetExampleSet('GEP')
+Condition.label<-GetExampleSet('Condition.label')
+
+```
+```{r eval=FALSE}
+#Run the function
+iTMEcellresult<-iTMEcell(ExpData=GEP,Condition.label=Condition.label,nperm=1000)
+```
+```{r echo=FALSE}
+###Get the result of this function
+iTMEcellresult<-GetExampleSet('iTMEcellresult')
+```
+```{r}
+###View first ten cells result
+iTMEcellresult[1:10,]
+
+```
+*****
+
+
+## <font face="微软雅黑">  Example 2 : Constructing regression survival model with cell marker genes. </font>
+
+<font face="微软雅黑">  The function **RiskRegressModel** is used to construct the cox risk regression model. Users need to provide survival data for the sample and specify a cell (provided in this method), and then the function will perform cox regression analysis on expression of marker genes of the cell and survival data. Statistical significant genes will be selected, and with these genes, a gene risk score model was constructed using a formula derived from the expression of the genes weighted by their cox proportional hazards regression coefficient.
+
+  The commands are as follows: </font>
+  
+```{r}
+library(survival)
+#Obtain input data
+clinicaldata<-GetExampleSet('clinicaldata')
+#Run the function
+R.result<-RiskRegressModel(cellname='NK cells',ExpData=GEP,clinical=clinicaldata,method="lasso",p.cutoff=0.05)
+
+#View the result
+head(R.result[[1]])
+head(R.result[[2]])
+```
+
+*****
+
+## <font face="微软雅黑"> Visualize 1: Draw a forest plot.</font>
+
+#####
+<font face="微软雅黑">  The function **plotforest** can visualize the result of cox regression analysis through forest plot. 
+  
+  The commands are as follows:  </font>
+
+```{r,fig.height=8}
+library(forestplot)
+library(survival)
+#Run the function
+plotforest(Regress.list=R.result,p.cutoff=0.05)
+
+```
+
+*****
+## <font face="微软雅黑"> Visualize 2: Draw a Kaplan-Meier curve.</font>
+
+#####
+<font face="微软雅黑">  The function **plotKMcurve** is used to draw the Kaplan-Meier curve according to the riskscore of samples from function **RiskRegressModel**.
+  
+  The commands are as follows:  </font>
+
+```{r}
+library(survminer)
+library(survival)
+#Run the function
+plotKMcurve(Regress.list=R.result,ExpData=GEP)
+
+```
+
+*****
+
+## <font face="微软雅黑"> Visualize 3: Draw a heat map.</font>
+
+#####
+<font face="微软雅黑">  The function **plotHeatmap** is used to draw a heat map of marker genes.
+  
+  The commands are as follows:  </font>
+
+```{r}
+library(pheatmap)
+#Run the function
+plotHeatmap(Regress.list=R.result,ExpData=GEP,p.cutoff=0.05)
+
+```
+
+*****
+
+## <font face="微软雅黑"> Visualize 4: Draw a split violin plot.</font>
+
+#####
+<font face="微软雅黑">  The function **plotSplitViolin** is used to draw a split violin plot of gene expression.
+  
+  The commands are as follows:  </font>
+
+```{r}
+library(ggplot2)
+library(reshape2)
+library(plyr)
+library(ggpubr)
+#Run the function
+plotSplitViolin(Regress.list=R.result,ExpData=GEP,gene.name="PDCD1")
+
+```
+
+*****

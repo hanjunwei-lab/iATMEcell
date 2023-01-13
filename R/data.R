@@ -1,0 +1,15 @@
+#' @title An environment variable that includes some example data
+#'
+#' @description An environment variable that includes some example data.
+#' GEP: An example gene expression profile;
+#' TME_related_Goterm: Biological process data from Gene Ontology;
+#' GoCellconGene: Gene symbols shared by a pair of cell and biological process (GOterm);
+#' Jaccardscore: Jaccard score calculated based on genes shared by a pair of cell and biological process (GOterm);
+#' clinicaldata: Clinical information of samples in gene expression profile;
+#' Condition.label: Classification information of samples in gene expression profile;
+#' TMEcellinfo: TME cells information.
+#' @format An environment variable
+#' @details The biological function data was derived from GO biological processes, In the “gene ontology” term, a biological process represents a specific objective that the organism is genetically programmed to achieve [23]. The biological process gene sets were downloaded from C5 GO gene sets in the Molecular Signatures Database (MSigDB) database (version 7.0) [24]. We then manually curated the GO gene sets associated with human immune function, and obtained 139 GO terms, which were deposited in our “iATMEcell” package.
+
+"envData"
+
