@@ -14,3 +14,15 @@ library(iATMEcell)
 ```
 # Please cite the following article when using iTMEcell:
 > Waiting for publication
+
+# Citation
+These codes and data are intended for research use only.
+
+``iATMEcell`` has already been published in *Briefings in Bioinformatics*. If you use ``iATMEcell`` or these codes in your publication, please cite the paper:
+
+Sheng Y, Wu J, Li X, et al. iATMEcell: identification of abnormal tumor microenvironment cells to predict the clinical outcomes in cancer based on cell-cell crosstalk network. Brief Bioinform. 2023;24(2):bbad074. https://doi.10.1093/bib/bbad074
+        
+        
+        
+        
+        
